@@ -15,7 +15,7 @@ set(TEST_SRC
     algorithm/TestHysteresisComparator.cpp
 )
 
-add_gtest(TCNAME ${PROJECT_NAME} SOURCE_FILES ${TEST_SRC} LIBS gtest gmock pthread)
+add_gtest(TCNAME ${PROJECT_NAME} SOURCE_FILES ${TEST_SRC} LIBS stdlike gtest gmock pthread)
 
 add_test(NAME ${PROJECT_NAME}
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/test

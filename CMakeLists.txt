@@ -7,7 +7,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(ENABLE_TESTING "Enable unit testing." OFF)
 
-include_directories(3rdparty)
+include_directories(
+    ./3rdparty
+    ./include
+)
 
 add_subdirectory(src)
 

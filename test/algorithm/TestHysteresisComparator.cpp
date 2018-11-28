@@ -1,50 +1,6 @@
 #include <gtest/gtest.h>
 
-namespace stdlike
-{
-
-class PositiveHysteresisComparator
-{
-  public:
-    PositiveHysteresisComparator(size_t hysteresis = 0) : mBaseHysteresis{hysteresis}, mHysteresis{mBaseHysteresis}, mResult{false} {}
-    template <typename T, typename U, typename Predicate>
-    bool operator()(T value, U thresh, Predicate &&p)
-    {
-        mResult = p(value, thresh);
-        if (mResult or mHysteresis > 0)
-        {
-            resetOrDecrementHysteresis();
-            return true;
-        }
-        return false;
-    }
-
-  private:
-    void resetOrDecrementHysteresis()
-    {
-        if (not mResult)
-        {
-            decrement();
-            return;
-        }
-        reset();
-    }
-    void reset()
-    {
-        mHysteresis = mBaseHysteresis;
-    }
-    void decrement()
-    {
-        --mHysteresis;
-    }
-
-  private:
-    size_t const mBaseHysteresis;
-    size_t mHysteresis;
-    bool mResult;
-};
-
-} // namespace stdlike
+#include <Algorithm.hpp>
 
 TEST(TestHysteresisComparator, correctlyComparesTwoNumbersWhenCalledWith0Hysteresis)
 {
@@ -59,7 +15,17 @@ TEST(TestHysteresisComparator, correctlyComparesTwoNumbersWhenCalledWith0Hystere
     stdlike::PositiveHysteresisComparator greaterThenComparator{};
 
     ASSERT_FALSE(greaterThenComparator(4.f, 10, std::greater<int>()));
+    ASSERT_FALSE(greaterThenComparator(9.f, 10, std::greater<int>()));
     ASSERT_TRUE(greaterThenComparator(10.F, 4, std::greater<int>()));
+}
+
+TEST(TestHysteresisComparator, correctlyComparesInTheCaseWhenFirstCallShouldReturnFalse)
+{
+    stdlike::PositiveHysteresisComparator greaterThenComparator{1};
+
+    ASSERT_FALSE(greaterThenComparator(4, 10, std::greater<int>()));
+    ASSERT_FALSE(greaterThenComparator(3, 10, std::greater<int>()));
+    ASSERT_TRUE(greaterThenComparator(10, 4, std::greater<int>()));
 }
 
 TEST(TestHysteresisComparator, correctlyComparesTwoNumbersWhenCalledWithNonZeroHysteresis)
@@ -82,4 +48,15 @@ TEST(TestHysteresisComparator, correctlyEvaluatesAPredicateWithAgivenHysteresis)
     ASSERT_TRUE(greaterThenComparator(10.F, 4, std::greater<int>()));
     ASSERT_TRUE(greaterThenComparator(1.F, 4, std::greater<int>()));
     ASSERT_FALSE(greaterThenComparator(0.F, 4, std::greater<int>()));
+
+    // try a bigger state
+    size_t hysteresisSize{500};
+    stdlike::PositiveHysteresisComparator greaterThenComparatorBig{hysteresisSize};
+    ASSERT_FALSE(greaterThenComparatorBig(0.F, 4, std::greater<int>()));
+    ASSERT_TRUE(greaterThenComparatorBig(10.F, 4, std::greater<int>()));
+    for (size_t count{hysteresisSize}; count > 0; --count)
+    {
+        greaterThenComparatorBig(1.F, 4, std::greater<int>());
+    }
+    ASSERT_FALSE(greaterThenComparatorBig(0.F, 4, std::greater<int>()));
 }
