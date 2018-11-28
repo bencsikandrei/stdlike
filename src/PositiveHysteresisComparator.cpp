@@ -3,25 +3,27 @@
 namespace stdlike
 {
 
-PositiveHysteresisComparator::PositiveHysteresisComparator(size_t hysteresis) : mBaseHysteresis{hysteresis}, mHysteresis{}, mResult{false} {}
+PositiveHysteresisComparator::PositiveHysteresisComparator(size_t hysteresis)
+  : mBaseHysteresis{ hysteresis }, mHysteresis{}, mResult{ false }
+{
+}
 void PositiveHysteresisComparator::resetOrDecrementHysteresis()
 {
-    if (not mResult)
-    {
-        decrementIfNotZero();
-        return;
-    }
-    reset();
+  if (not mResult)
+  {
+    decrementIfNotZero();
+    return;
+  }
+  reset();
 }
 void PositiveHysteresisComparator::reset()
 {
-    mHysteresis = mBaseHysteresis;
+  mHysteresis = mBaseHysteresis;
 }
 void PositiveHysteresisComparator::decrementIfNotZero()
 {
-    if (mHysteresis == 0)
-        return;
-    --mHysteresis;
+  if (mHysteresis == 0) return;
+  --mHysteresis;
 }
 
 } // namespace stdlike
