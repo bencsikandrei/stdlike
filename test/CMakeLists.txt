@@ -13,6 +13,9 @@ link_directories(
 set(TEST_SRC 
     testMain.cpp
     algorithm/TestHysteresisComparator.cpp
+    algorithm/TestFindAll.cpp
+    algorithm/TestTransformIf.cpp
+    traits/TestHasCertainMethod.cpp
 )
 
 add_gtest(TCNAME ${PROJECT_NAME} SOURCE_FILES ${TEST_SRC} LIBS stdlike gtest gmock pthread)
